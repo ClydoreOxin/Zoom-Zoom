@@ -11,6 +11,7 @@ public class WallSpawner : MonoBehaviour
     public GameObject playerPos;
     public GameObject groundPrefabs;
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI highScoreText;
     public Button restartButton;
     public PlayerMovement playerMoveRef;
     public Vector3 spawnRange;
@@ -27,12 +28,18 @@ public class WallSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        MainManager.Instance.LoadScore();
         playerPos = GameObject.Find("Player");
         playerMoveRef = playerPos.GetComponent<PlayerMovement>();
         score = 0;
         StartCoroutine(SpawnWalls());
         restartButton.gameObject.SetActive(false);
-        
+        if (MainManager.Instance.highScore != 0)
+        {
+            
+            highScoreText.text = "High Score: " + MainManager.Instance.highScore;
+        }
+
     }
 
     // Update is called once per frame
@@ -57,6 +64,7 @@ public class WallSpawner : MonoBehaviour
             }
         }
         if (!playerMoveRef.isGameActive) {
+            MainManager.Instance.highScore = score;
             restartButton.gameObject.SetActive(true);
         }
     }
@@ -75,11 +83,9 @@ public class WallSpawner : MonoBehaviour
     }
     public void NumberOfWalls() {
         typeOfWall = Random.Range(0, wallPrefabs.Length);
-        spawnRange = new Vector3(Random.Range(-71, 68), 0, transform.position.z);
+        spawnRange = new Vector3(Random.Range(-50, 50), 0, transform.position.z);
         Instantiate(wallPrefabs[typeOfWall], spawnRange,
                     wallPrefabs[typeOfWall].transform.rotation);
     }
-    public void RestartScene() {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
+   
 }
